@@ -11,62 +11,65 @@ from PIL import Image
 #disable bomwarning warning
 warnings.simplefilter('ignore', Image.DecompressionBombWarning)
 
-#debug
-debug = 0
+#DOWNLOAD
+DOWNLOAD = 0
 
-#verbose mode
-verbose = 1 #show console status
+#VERBOSE mode
+VERBOSE = 1 #show console status
 
 # if you want thumbnails as covers (using local files)
-UseThumbnails = 1
+USETHUMBNAILS = 0
 
 # if you want to use original external urls for covers
-UseExternalCover = 0
+USEEXTERNALCOVER = 0
 
 #thumbnail resolutions
-thumbnailmaxX = 400
-thumbnailmaxY = 400
+THUMBNAILMAX_X = 400
+THUMBNAILMAX_Y = 400
 
-filemovies = "movies-latest.json"
-fileseries = "series-latest.json"
+MOVIEURLFILENAME = "movies-latest.json"
+SERIESFILENAME = "series-latest.json"
 
-movieextendedprefix = '-extended' #used as ttXXXXXX-extended.json for each movie
+MOVIECOVERURLORIGINALPREFIX = '-original' #used as ttXXXXXX-original.json for each movie
 
-extendeddirectory = 'extended/'
-coverdirectory = 'html/covers/'
-jsondirectory = 'json/'
-htmldirectory = 'html/'
+ORIGINALDIRECTORY = 'original/'
+HTMLHTMLCOVERDIRECTORY = 'html/covers/'
+JSONDIRECTORY = 'json/'
+HTMLDIRECTORY = 'html/'
 
-html_file = htmldirectory + 'index-' + time.strftime("%Y%m%d-%H%M%S") + '.html'
+HTML_FILE = HTMLDIRECTORY + 'index-' + time.strftime("%Y%m%d") + '.html'
 
-#check if directories exist
-if os.path.isdir(htmldirectory):
-    if verbose: print ("directory exist " + htmldirectory)
+if VERBOSE: print('Trying in to create HTMLDIRECTORY: ' + HTMLDIRECTORY)
+
+#check if directory HTML exist
+if os.path.isdir(HTMLDIRECTORY):
+    if VERBOSE: print ("directory exist " + HTMLDIRECTORY)
 else:
-    os.mkdir(htmldirectory)
+    #create directory
+    os.mkdir(HTMLDIRECTORY)
 
-if os.path.isdir(extendeddirectory):
-    if verbose: print ("directory exist " + extendeddirectory)
+if os.path.isdir(ORIGINALDIRECTORY):
+    if VERBOSE: print ("directory exist " + ORIGINALDIRECTORY)
 else:
-    os.mkdir(extendeddirectory)
+    os.mkdir(ORIGINALDIRECTORY)
 
-if os.path.isdir(coverdirectory):
-    if verbose: print ("directory exist " + coverdirectory)
+if os.path.isdir(HTMLHTMLCOVERDIRECTORY):
+    if VERBOSE: print ("directory exist " + HTMLHTMLCOVERDIRECTORY)
 else:
-    os.mkdir(coverdirectory)
+    os.mkdir(HTMLHTMLCOVERDIRECTORY)
     
-if os.path.isdir(jsondirectory):
-    if verbose: print ("directory exist " + jsondirectory)
+if os.path.isdir(JSONDIRECTORY):
+    if VERBOSE: print ("directory exist " + JSONDIRECTORY)
 else:
-    os.mkdir(jsondirectory)
+    os.mkdir(JSONDIRECTORY)
 
     
 #your https://imdb-api.com/ api id, gets your there
 #there is a free one for 100 request a day
-apiid = 'k_XXXXX'
+apiid = 'k_lir8ah97'
 
-if debug:
-    if verbose: print('Skipping download of new json files')
+if DOWNLOAD:
+    if VERBOSE: print('Skipping DOWNLOAD of new json files')
 else:
     #os.system('rm *.json')
     
@@ -74,10 +77,10 @@ else:
     urlseries = 'https://vidsrc.me/episodes/latest/page-1.json'
 
     rmovies = requests.get(urlmovies, allow_redirects=True)
-    open(filemovies, 'wb').write(rmovies.content)
+    open(MOVIEURLFILENAME, 'wb').write(rmovies.content)
 
     rseries = requests.get(urlseries, allow_redirects=True)
-    open(fileseries, 'wb').write(rseries.content)
+    open(SERIESFILENAME, 'wb').write(rseries.content)
 
 #using wget (not using it)
 #os.system('rm *.json')
@@ -89,66 +92,66 @@ else:
 
 
 
-with open(filemovies, 'r') as f:
+with open(MOVIEURLFILENAME, 'r') as f:
     json_movies = json.load(f)
 
-with open(fileseries, 'r') as f:
+with open(SERIESFILENAME, 'r') as f:
     json_series = json.load(f)
     
-#if verbose: print( distros_dict)
+#if VERBOSE: print( distros_dict)
 
-#if verbose: print(json.dumps(json_movies, indent = 4, sort_keys=True))
+#if VERBOSE: print(json.dumps(json_movies, indent = 4, sort_keys=True))
 
-if verbose: print(' Number of Pages:  ' + str(json_movies['pages']))
-if verbose: print('Number of Series: ' + str(json_series['pages']))
+if VERBOSE: print(' Number of Pages:  ' + str(json_movies['pages']))
+if VERBOSE: print('Number of Series: ' + str(json_series['pages']))
 
 # Load the json data into a variable
 #storedata = json.loads(json_movies)
 
-# Iterate the for loop to if verbose: print the data with key
+# Iterate the for loop to if VERBOSE: print the data with key
 #for val in storedata:
-#  if verbose: print("%s: %s" % (val, storedata[val]))
+#  if VERBOSE: print("%s: %s" % (val, storedata[val]))
 
 for result in json_movies['result']:
-    if verbose: print("processing: " + json.dumps(result))
+    if VERBOSE: print("processing: " + json.dumps(result))
     
-    individualmoviejson = extendeddirectory + result['imdb_id'] + movieextendedprefix + '.json'
+    individualmoviejson = ORIGINALDIRECTORY + result['imdb_id'] + MOVIECOVERURLORIGINALPREFIX + '.json'
     
     if path.exists(individualmoviejson):
-        if verbose:
+        if VERBOSE:
             print ("file exist " + individualmoviejson)
     else:
-        if verbose: print ("Creating new " + individualmoviejson)
+        if VERBOSE: print ("Creating new " + individualmoviejson)
         resultdicttostring = json.dumps(result)
 
-        #open(fileseries, 'wb').write(rseries.content)
+        #open(SERIESFILENAME, 'wb').write(rseries.content)
         #open(jsonfilename, 'wb').write(rmovie_json.content)
 
         open(individualmoviejson, 'w+').write(resultdicttostring)
 
-    if verbose: print('imdb_id: ' + result['imdb_id'])
+    if VERBOSE: print('imdb_id: ' + result['imdb_id'])
     
     ttid_string = result['imdb_id']
     
-    if verbose: print('  Title: ' + result['title'])
-    if verbose: print('Quality: ' + result['quality'])
-    if verbose: print('embed_url: ' + result['embed_url'])
+    if VERBOSE: print('  Title: ' + result['title'])
+    if VERBOSE: print('Quality: ' + result['quality'])
+    if VERBOSE: print('embed_url: ' + result['embed_url'])
     
     #get poster and more
-    htmlfilename = htmldirectory + ttid_string + '.html'
-    jsonfilename = jsondirectory + ttid_string + '.json'
-    coverfilename = coverdirectory + ttid_string + '.jpg'
-    coverfilenameThumbnail = coverdirectory + ttid_string + '-thumbnail.jpg'
+    htmlfilename = HTMLDIRECTORY + ttid_string + '.html'
+    jsonfilename = JSONDIRECTORY + ttid_string + '.json'
+    coverfilename = HTMLHTMLCOVERDIRECTORY + ttid_string + '.jpg'
+    coverfilenameThumbnail = HTMLHTMLCOVERDIRECTORY + ttid_string + '-thumbnail.jpg'
     
     movie_url = 'https://imdb-api.com/API/Search/' + apiid + '/' + ttid_string
-    if verbose: print('Processing Search URL: ' + movie_url)
+    if VERBOSE: print('Processing Search URL: ' + movie_url)
     #request data
     
     #hold request for now, since i only have 100 per day
     if path.exists(jsonfilename):
-        if verbose: print ("file exist " + jsonfilename)
+        if VERBOSE: print ("file exist " + jsonfilename)
     else:
-        if verbose: print ("Creating new " + jsonfilename)
+        if VERBOSE: print ("Creating new " + jsonfilename)
         rmovie_json = requests.get(movie_url, allow_redirects=True)
 
         # check if limit has been reach
@@ -160,74 +163,75 @@ for result in json_movies['result']:
         with open(individualmoviejson, 'r') as f:
             try:
                 json_movie = json.load(f)
-                if verbose: print('Success json.load(' + individualmoviejson + ')')
+                if VERBOSE: print('Success json.load(' + individualmoviejson + ')')
                 #check if is a valid request or error been found
                 if isinstance(json_movie['results'], list):
                     #it is, save it
+                    if VERBOSE: print('Writing: ' + individualmoviejson)
                     open(individualmoviejson, 'wb').write(rmovie_json.content)
                 else:
                     #error found!
-                    if verbose: print('Error in ' + individualmoviejson + ': ' + json.dumps(rmovie_json))
+                    if VERBOSE: print('Error in ' + individualmoviejson + ': ' + json.dumps(rmovie_json))
 
 
             except:
-                if verbose: print('Fail json.load(' + individualmoviejson + ')')
+                if VERBOSE: print('Fail json.load(' + individualmoviejson + ')')
                 print("TypeError: 'NoneType' object is not iterable")
 
     #prepare json var
-    if verbose: print('\nPreparing: ' + individualmoviejson)
+    if VERBOSE: print('\nPreparing: ' + individualmoviejson)
     
     
     #make loop in json file
     if isinstance(json_movie['results'], list):
         for movie_json_result in json_movie['results']:
             try:
-                if verbose: print('Processing' + json.dumps(movie_json_result))
+                if VERBOSE: print('Processing' + json.dumps(movie_json_result))
                 #get cover to local storage
-                if verbose: print(movie_json_result['image'])
+                if VERBOSE: print(movie_json_result['image'])
 
                 movie_cover = movie_json_result['image']
                 if path.exists(coverfilename):
-                    if verbose: print ("file exist " + coverfilename)
+                    if VERBOSE: print ("file exist " + coverfilename)
                 else:
-                    if verbose: print ("Creating new " + coverfilename)
+                    if VERBOSE: print ("Creating new " + coverfilename)
                     get_cover = requests.get(movie_cover, allow_redirects=True)
                     open(coverfilename, 'wb').write(get_cover.content)
 
                 # create a thumbnail
                 # creating a object
                 if path.exists(coverfilenameThumbnail):
-                    if verbose: print ('Thumbnail file exist: ' + coverfilenameThumbnail)
+                    if VERBOSE: print ('Thumbnail file exist: ' + coverfilenameThumbnail)
                 else:
-                    if verbose: print ('Creating new Thumnail file: ' + coverfilenameThumbnail)
+                    if VERBOSE: print ('Creating new Thumnail file: ' + coverfilenameThumbnail)
                     image = Image.open(coverfilename) 
-                    MAX_SIZE = (thumbnailmaxX, thumbnailmaxY) 
+                    MAX_SIZE = (THUMBNAILMAX_X, THUMBNAILMAX_Y) 
 
                     image.thumbnail(MAX_SIZE) 
   
                     # creating thumbnail
                     image.save(coverfilenameThumbnail) 
             except TypeError:
-                if verbose: print('Fail json.load(' + individualmoviejson + ')')
+                if VERBOSE: print('Fail json.load(' + individualmoviejson + ')')
                 print("TypeError: 'NoneType' object is not iterable")
            
-            if verbose: print
+            if VERBOSE: print
     else:
-        if verbose: print('Fail to create file! ' + individualmoviejson)
+        if VERBOSE: print('Fail to create file! ' + individualmoviejson)
     
 
 # ok time to make my huge html
 #
-# get loop for each 'extended/*.json' file and procced
-onlyfiles = listdir(extendeddirectory)
+# get loop for each 'original/*.json' file and procced
+onlyfiles = listdir(ORIGINALDIRECTORY)
 
 mycounter = 0 #counter to display a table 4 times per row
 htmlsource = ""
 
 for json_ext_file in onlyfiles:
-    if verbose: print('Opening: ' + extendeddirectory + json_ext_file)
+    if VERBOSE: print('Opening: ' + ORIGINALDIRECTORY + json_ext_file)
 
-    with open(extendeddirectory + json_ext_file, 'r') as f:
+    with open(ORIGINALDIRECTORY + json_ext_file, 'r') as f:
         json_movie = json.load(f)
 
     imdb_id = json_movie['imdb_id']
@@ -237,11 +241,11 @@ for json_ext_file in onlyfiles:
     
     # now time to process other json in json/
     
-    jsonfilename = format(jsondirectory + imdb_id + '.json').encode()
+    jsonfilename = format(JSONDIRECTORY + imdb_id + '.json').encode()
     coverfilename = 'covers/' + imdb_id + '.jpg'
     thumbnail_local_cover_url = 'covers/' + imdb_id + '-thumbnail.jpg'
     
-    if verbose:
+    if VERBOSE:
         #check if jsonfilame is not from unicode to bytes.
         if not isinstance(jsonfilename, bytes):
             jsonfilename = jsonfilename
@@ -260,11 +264,11 @@ for json_ext_file in onlyfiles:
         orig_description = movie_json_result['description']
     
     # check if using local-thumbnail for cover, if does then make local_cover_url = thumbnail_local_cover_url
-    if UseThumbnails:
+    if USETHUMBNAILS:
         local_cover_url = thumbnail_local_cover_url
     
-    #overwrite covers is UseExternalCover with external cover
-    if UseExternalCover:
+    #overwrite covers is USEEXTERNALCOVER with external cover
+    if USEEXTERNALCOVER:
         local_cover_url = orig_cover_url
         
         
@@ -297,9 +301,9 @@ htmlsource += """
  </tbody>
 </table>
 """       
-#if verbose: print(htmlsource)
-if verbose: print('writing html_file: ' + html_file)
-open(html_file, 'wb').write(htmlsource)
+#if VERBOSE: print(htmlsource)
+if VERBOSE: print('writing HTML_FILE: ' + HTML_FILE)
+open(HTML_FILE, 'wb').write(htmlsource)
 
 print('program end')
 
